@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <map>
 #include <vector>
-#include <sstream>
 #include "list.h"
 
 #define INITIAL_LOGS_NUMBER 10
@@ -16,7 +15,7 @@ typedef struct BANK_ACCOUNT
     unsigned __int64          accountIdentifier;
     unsigned __int64          balance;
     HANDLE                    mutex;
-    //std::vector<std::string>* logs;
+    std::vector<std::string>* logs;
 
 }_BANK_ACCOUNT, *PBANK_ACCOUNT;
 
@@ -47,8 +46,12 @@ typedef struct _THREAD_PARAMETERS
     HANDLE EventEndOfOperations;
     HANDLE EventGoOn;
     HANDLE EventTerminate;
+    HANDLE EventPauseForCheck;
+    HANDLE EventThreadsPaused;
+    HANDLE EventCheckDone;
     HANDLE ShutDown;
     BYTE ThreadsEnded;
+    BYTE ThreadsPaused;
     std::string OperationsPath;
     std::map<unsigned __int64, PBANK_ACCOUNT> BankAccounts;
 
