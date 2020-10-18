@@ -594,7 +594,6 @@ ThreadDoMagic(
 
             fprintf_s(stdout, "A thread paused\n");
             WaitForSingleObject(thParam->EventCheckDone, INFINITE);
-            ResetEvent(thParam->EventCheckDone);
         }
         if (InterlockedIsListEmpty(&thParam->ListHead->ListEntry, thParam->CriticalLock, &thParam->EventGoOn))
         {
