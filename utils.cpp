@@ -72,7 +72,9 @@ insertInListEntry(
     newNode->Info.accountTransferB = AccountB;
     newNode->Info.amount = Amount;
 
+    EnterCriticalSection(CriticalSectionLock);
     InterlockedInsertTailList(&ListEntryHead->ListEntry, &newNode->ListEntry, CriticalSectionLock);
+    LeaveCriticalSection(CriticalSectionLock);
 
     SetEvent(EventGoOn);
     return;
@@ -98,12 +100,12 @@ SetupInitialAccounts(
     if (!(infile >> numberOfAccounts))
     {
         fprintf_s(stderr, "Couldn't read initial bank accounts number\n");
-        return -1;
+        return (DWORD)-1;
     }
     if (0 > numberOfAccounts)
     {
         fprintf_s(stderr, "Negative number of accounts, bad!\n");
-        return -1;
+        return (DWORD)-1;
     }
     
 
@@ -140,7 +142,7 @@ ParseOperations(
 
     if (!(fileOps >> numberOfOperations))
     {
-        return -1;
+        return (DWORD)-1;
     }
 
     while (numberOfOperations--)
@@ -168,5 +170,6 @@ ParseOperations(
     fprintf_s(stdout, "All transfers added to the list\n");
 
     SetEvent(pthreadParameters->EventTerminate);
+    SetEvent(pthreadParameters->EventGoOn);
     return 0;
 }

@@ -16,7 +16,7 @@ typedef struct BANK_ACCOUNT
     unsigned __int64          accountIdentifier;
     unsigned __int64          balance;
     HANDLE                    mutex;
-    std::vector<std::string>* logs;
+    //std::vector<std::string>* logs;
 
 }_BANK_ACCOUNT, *PBANK_ACCOUNT;
 
@@ -40,8 +40,6 @@ typedef struct _NODE
 
 typedef struct _THREAD_PARAMETERS
 {
-    std::string OperationsPath;
-    std::map<unsigned __int64, PBANK_ACCOUNT> BankAccounts;
     unsigned __int64 OperationID;
     DWORD NumberOfThreads;
     NODE* ListHead;
@@ -51,6 +49,8 @@ typedef struct _THREAD_PARAMETERS
     HANDLE EventTerminate;
     HANDLE ShutDown;
     BYTE ThreadsEnded;
+    std::string OperationsPath;
+    std::map<unsigned __int64, PBANK_ACCOUNT> BankAccounts;
 
 }THREAD_PARAMETERS, *PTHREAD_PARAMETERS;
 

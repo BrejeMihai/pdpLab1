@@ -108,7 +108,7 @@ BOOLEAN
 InterlockedIsListEmpty(
     __in const LIST_ENTRY* ListHead,
     __in CRITICAL_SECTION* ListLock,
-    __in HANDLE EventGoOn
+    __in HANDLE* EventGoOn
 )
 {
     BOOLEAN result;
@@ -119,9 +119,9 @@ InterlockedIsListEmpty(
     result = IsListEmpty(ListHead);
     LeaveCriticalSection(ListLock);
 
-    if (result == TRUE)
+    if (result != FALSE)
     {
-        ResetEvent(EventGoOn);
+        ResetEvent(*EventGoOn);
     }
     return result;
 }

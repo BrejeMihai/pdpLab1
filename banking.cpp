@@ -13,8 +13,8 @@ InitializeBankingAccount(
     {
         return FALSE;
     }
-    PBankAccount->logs = new std::vector<std::string>;
-    PBankAccount->logs->push_back("STRING");
+    //PBankAccount->logs = new std::vector<std::string>;
+    //PBankAccount->logs->push_back("STRING");
     return TRUE;
 }
 
@@ -35,10 +35,10 @@ DeinitializeBankingAccounts(
             {
                 CloseHandle(it->second->mutex);
             }
-            if (NULL != it->second->logs)
+            /*if (NULL != it->second->logs)
             {
                 delete it->second->logs;
-            }
+            }*/
             free(it->second);
         }
         it++;
@@ -137,10 +137,10 @@ MakeTransfer(
 
         if (pAccountA->balance < Amount)
         {
-            std::ostringstream stringStream;
-            stringStream << "Transaction " << OperationID << " failed, insufficient money in account.";
+          //  std::ostringstream stringStream;
+           // stringStream << "Transaction " << OperationID << " failed, insufficient money in account.";
 
-            pAccountA->logs->push_back(stringStream.str());
+         //   pAccountA->logs->push_back(stringStream.str());
             ReleaseMutex(pAccountA->mutex);
             return;
         }
@@ -166,10 +166,10 @@ MakeTransfer(
 
         if (pAccountA->balance < Amount)
         {
-            std::ostringstream stringStream;
-            stringStream << "Transaction " << OperationID << " failed, insufficient money in account.";
+           // std::ostringstream stringStream;
+            //stringStream << "Transaction " << OperationID << " failed, insufficient money in account.";
 
-            pAccountA->logs->push_back(stringStream.str());
+           // pAccountA->logs->push_back(stringStream.str());
             pAccountB->balance -= Amount;
 
             ReleaseMutex(pAccountB->mutex);
@@ -246,20 +246,20 @@ StartTheMagic(
         return;
     }
 
-    WaitForSingleObject(operationsThread, INFINITE);
+   // WaitForSingleObject(operationsThread, INFINITE);
 
-    int t = 15;
-PLIST_ENTRY field = NULL;
-NODE* currentWork = NULL;
-while (t--)
-{
-    EnterCriticalSection(threadParameters.CriticalLock);
-    field = InterlockedRemoveHeadList(&threadParameters.ListHead->ListEntry,threadParameters.CriticalLock);
-    LeaveCriticalSection(threadParameters.CriticalLock);
-
-    currentWork = (NODE*)CONTAINING_RECORD(field, NODE, ListEntry);
-    fprintf_s(stdout, "YA");
-}
+//    int t = 15;
+//PLIST_ENTRY field = NULL;
+//NODE* currentWork = NULL;
+//while (t--)
+//{
+//    EnterCriticalSection(threadParameters.CriticalLock);
+//    field = InterlockedRemoveHeadList(&threadParameters.ListHead->ListEntry,threadParameters.CriticalLock);
+//    LeaveCriticalSection(threadParameters.CriticalLock);
+//
+//    currentWork = (NODE*)CONTAINING_RECORD(field, NODE, ListEntry);
+//    fprintf_s(stdout, "YA");
+//}
 
     EnterThreadPool(theListHead, NumberOfThreads, &threadParameters);
 
@@ -314,7 +314,7 @@ ThreadDoMagic(
 
     while (TRUE)
     {
-        if (InterlockedIsListEmpty(&thParam->ListHead->ListEntry, thParam->CriticalLock, thParam->EventGoOn))
+        if (InterlockedIsListEmpty(&thParam->ListHead->ListEntry, thParam->CriticalLock, &thParam->EventGoOn))
         {
             EnterCriticalSection(thParam->CriticalLock);
             if ((WAIT_OBJECT_0 == WaitForSingleObject(thParam->EventTerminate, 0)) && (WAIT_OBJECT_0 != WaitForSingleObject(thParam->EventGoOn, 0)))
@@ -339,8 +339,8 @@ ThreadDoMagic(
         else
         {
             EnterCriticalSection(thParam->CriticalLock);
-            currentOperationID = thParam->OperationID;
-            thParam->OperationID++;
+           // currentOperationID = thParam->OperationID;
+           // thParam->OperationID++;
             field = InterlockedRemoveHeadList(&(thParam->ListHead->ListEntry), thParam->CriticalLock);
             LeaveCriticalSection(thParam->CriticalLock);
 
@@ -350,7 +350,6 @@ ThreadDoMagic(
             {
                 MakeTransfer(currentOperationID, currentWork->Info.accountTransferA, currentWork->Info.accountTransferB, currentWork->Info.amount, thParam->BankAccounts);
             }
-            free(currentWork);
         }
     }
     EnterCriticalSection(thParam->CriticalLock);
